@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: training-feedback-system
+    env: python
+    plan: starter
+    buildCommand: >
+      pip install -r requirements.txt &&
+      python training_feedback_system/manage.py collectstatic --no-input &&
+      python training_feedback_system/manage.py migrate
+    startCommand: gunicorn training_feedback_system.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: ALLOWED_HOSTS
+        value: "*.onrender.com"
+      - key: DATABASE_URL
+        fromService:
+          name: training-feedback-db
+          property: connectionString
+    staticPublicPath: /static
+    publicDir: ./training_feedback_system/static
+    disk:
+      name: media
+      mountPath: /opt/render/project/training_feedback_system/media
+      sizeGB: 10
+
+  - type: pserv
+    name: training-feedback-db
+    plan: starter
+    ipAllowList: []
+    env: postgres
+    envVars:
+      - key: POSTGRES_DB
+        value: training_feedback
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        generateValue: true
