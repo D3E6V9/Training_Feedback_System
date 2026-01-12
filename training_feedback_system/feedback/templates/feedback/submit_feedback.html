@@ -1,0 +1,13 @@
+{% extends 'feedback/base.html' %}
+
+{% block title %}
+    Submit Feedback - 
+    {% if session %}
+        {{ session.session_title }}
+    {% else %}
+        Unavailable
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+{% endblock %}

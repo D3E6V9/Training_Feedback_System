@@ -1,0 +1,1 @@
+This folder and all its contents are to be deleted as part of authentication system cleanup.

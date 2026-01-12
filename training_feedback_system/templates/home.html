@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <p class="lead">Admins: Please <a href="{% url 'feedback:login' %}">login</a> to access management features.</p>
+            <a href="{% url 'feedback:public_session_list' %}" class="btn btn-primary mt-3">View Available Sessions</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

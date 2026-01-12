@@ -1,0 +1,18 @@
+Cleanup plan for removing 'Training Feedback System' and 'Submit Feedback' pages:
+
+1. Remove all references to 'Training Feedback System' in:
+   - templates/home.html
+   - templates/base.html
+   - feedback/templates/feedback/base.html
+   - feedback/templates/feedback/public_session_list.html
+
+2. Remove 'submit_feedback' logic:
+   - Delete feedback/templates/feedback/submit_feedback.html
+   - Remove 'submit_feedback' view from feedback/views.py and feedback/views_public.py
+   - Remove 'submit-feedback/' route from feedback/urls.py
+   - Remove all links/buttons to 'submit_feedback' in templates (home.html, public_session_list.html, base.html, feedback/base.html)
+   - Remove any form logic in feedback/forms.py related to 'Submit Feedback'
+
+3. Double-check navigation and static files for references.
+
+4. Remove any related static files if found.

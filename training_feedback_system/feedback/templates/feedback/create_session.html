@@ -1,0 +1,71 @@
+{% extends 'feedback/base.html' %}
+
+{% block title %}Create Training Session{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Create New Training Session</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" autocomplete="off">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        {{ form.session_title.label_tag }}
+                        {{ form.session_title }}
+                        {{ form.trainer.label_tag }}
+                        {{ form.trainer }}
+                        {{ form.date.label_tag }}
+                        {{ form.date }}
+                        {{ form.location.label_tag }}
+                        {{ form.location }}
+                        {{ form.duration_hours.label_tag }}
+                        {{ form.duration_hours }}
+                        {{ form.max_participants.label_tag }}
+                        {{ form.max_participants }}
+                        {{ form.is_active.label_tag }}
+                        {{ form.is_active }}
+                        <div class="form-group mt-3">
+                            <label for="trainer_name">If trainer not in list, enter new trainer name:</label>
+                            <input type="text" name="trainer_name" id="trainer_name" class="form-control" placeholder="Enter trainer name">
+                        </div>
+                        <button type="submit" class="btn btn-success mt-3">Create Session</button>
+                        <a href="{% url 'feedback:session_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+                    </form>
+                    <script>
+                        // Allow form submission if trainer_name is filled, even if dropdown is not selected
+                        document.querySelector('form').addEventListener('submit', function(e) {
+                            var trainerSelect = document.querySelector('select[name="trainer"]');
+                            var trainerName = document.getElementById('trainer_name').value.trim();
+                            if (trainerSelect.value === '' && !trainerName) {
+                                e.preventDefault();
+                                alert('Please select a trainer or enter a new trainer name.');
+                            } else if (trainerSelect.value === '' && trainerName) {
+                                // Remove required attribute to allow submission
+                                trainerSelect.removeAttribute('required');
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

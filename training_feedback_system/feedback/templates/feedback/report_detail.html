@@ -1,0 +1,14 @@
+{% extends 'feedback/base.html' %}
+{% block title %}Report Detail{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Report for {{ session.session_title }}</h2>
+    {% if report.word_document %}
+    <a href="{{ report.word_document.url }}" class="btn btn-primary">Download Word Report</a>
+    {% endif %}
+    <hr>
+    <h4>AI Analysis</h4>
+    <pre>{{ ai_analysis_data|default:'No analysis available.' }}</pre>
+</div>
+{% endblock %}
+

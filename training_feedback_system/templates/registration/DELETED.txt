@@ -1,0 +1,1 @@
+All authentication templates in this folder have been deleted as part of the new authentication system setup.

@@ -1,0 +1,388 @@
+{% extends 'base_public.html' %}
+{% load static %}
+{% load feedback_extras %}
+{% load dict_extras %}
+{% block content %}
+<style>
+  :root {
+    --primary-purple: #7b61ff;
+    --background: #fff;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --border-gray: #e5e7eb;
+  }
+  
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #6c47ff 0%, #a084ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .feedback-card {
+    background: var(--background);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    width: 100%;
+    padding: 40px 48px;
+    margin: 20px auto;
+  }
+  
+  .feedback-title {
+    color: var(--text-primary);
+    font-size: 2.2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .session-info {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  .info-box {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    color: var(--text-primary);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+  
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-purple);
+    margin-bottom: 16px;
+    margin-top: 24px;
+    border-bottom: 2px solid var(--primary-purple);
+    padding-bottom: 4px;
+  }
+  
+  .rating-block {
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1.5px solid #e5e7eb;
+    padding: 24px 20px 18px 20px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 8px rgba(107, 71, 255, 0.06);
+  }
+  
+  .question-label {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .question-number {
+    color: var(--primary-purple);
+    font-weight: 700;
+    margin-right: 0.5rem;
+  }
+  
+  .question-help {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    margin-left: 1.8rem;
+  }
+  
+  /* Pill Button Styling */
+  .rating-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  
+  .rating-radio-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 10px 18px;
+    border: 1.5px solid var(--primary-purple);
+    border-radius: 999px;
+    background: #fff;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    position: relative;
+  }
+  
+  .rating-radio-label input {
+    display: none;
+  }
+  
+  .rating-radio-text {
+    display: inline;
+  }
+  
+  .rating-radio-label:hover {
+    background: #f4f2ff;
+    border-color: var(--primary-purple);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(123, 97, 255, 0.15);
+  }
+  
+  .rating-radio-label input:checked + .rating-radio-text {
+    color: #fff;
+  }
+  
+  .rating-radio-label:has(input:checked) {
+    background: var(--primary-purple);
+    border-color: var(--primary-purple);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(123, 97, 255, 0.3);
+  }
+  
+  .form-label {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 1.05rem;
+  }
+  
+  .form-control, .form-textarea {
+    width: 100%;
+    border: 1.5px solid var(--border-gray);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    background: #fff;
+    color: var(--text-primary);
+    font-family: inherit;
+    transition: border 0.2s, box-shadow 0.2s;
+  }
+  
+  .form-control:focus, .form-textarea:focus {
+    border-color: var(--primary-purple);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.15);
+  }
+  
+  .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .form-group {
+    margin-bottom: 24px;
+  }
+  
+  .form-actions {
+    text-align: center;
+    margin-top: 32px;
+  }
+  
+  .submit-btn {
+    background: linear-gradient(90deg, var(--primary-purple) 0%, #a084ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(123, 97, 255, 0.25);
+    transition: all 0.2s ease;
+  }
+  
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(123, 97, 255, 0.35);
+  }
+  
+  .submit-btn[aria-busy="true"] {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  
+  .error {
+    color: #d32f2f;
+    font-size: 0.95rem;
+    margin-top: 8px;
+  }
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 900px) {
+    .feedback-card {
+      padding: 24px 16px;
+    }
+    
+    .feedback-title {
+      font-size: 1.8rem;
+    }
+    
+    .rating-radio-label {
+      font-size: 0.9rem;
+      padding: 9px 15px;
+    }
+    
+    .question-label {
+      font-size: 1.1rem;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .feedback-card {
+      padding: 16px 12px;
+      margin: 12px 8px;
+    }
+    
+    .feedback-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .rating-block {
+      padding: 16px 12px;
+      margin-bottom: 20px;
+    }
+    
+    .rating-radio-group {
+      gap: 10px;
+    }
+    
+    .rating-radio-label {
+      font-size: 0.85rem;
+      padding: 8px 14px;
+      flex: 1 1 calc(50% - 6px);
+      min-width: 70px;
+    }
+    
+    .question-help {
+      margin-left: 0;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 12px 24px;
+    }
+  }
+</style>
+<div class="feedback-card" role="form" aria-labelledby="feedbackFormTitle">
+  <div class="feedback-title" id="feedbackFormTitle">Training Feedback Form</div>
+  
+  {% if session %}
+    <div class="session-info">
+      <b>Session:</b> {{ session.session_title }}<br>
+      {% if session.trainer %}<b>Trainer:</b> {{ session.trainer.name }}<br>{% endif %}
+      {% if session.date %}<b>Date:</b> {{ session.date|date:"F d, Y" }}<br>{% endif %}
+      {% if session.location %}<b>Location:</b> {{ session.location }}<br>{% endif %}
+    </div>
+  {% endif %}
+  
+  <div class="info-box" role="note">
+    <b>Instructions:</b> Please rate your experience with the training session on a scale of 1-5, where 5 represents "Strongly Agree" and 1 represents "Strongly Disagree".
+  </div>
+  
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="id_participant_name" class="form-label">Your Name (Optional)</label>
+      {{ feedback_form.participant_name }}
+    </div>
+    
+    <div class="section-title">Rating Questions</div>
+    
+    {% for field_name in rating_field_names %}
+      {% with field=feedback_form|get_item:field_name %}
+      <div class="rating-block">
+        <label for="{{ field.id_for_label }}" class="question-label">
+          <span class="question-number">{{ forloop.counter }}.</span>
+          <span class="question-text">{{ field.label|remove_leading_number }}</span>
+        </label>
+        {% if field.help_text %}
+          <div class="question-help">{{ field.help_text }}</div>
+        {% endif %}
+        <div class="rating-radio-group" role="radiogroup" aria-labelledby="{{ field.id_for_label }}">
+          {% for value, label in field.field.choices %}
+            <label class="rating-radio-label">
+              <input type="radio"
+                     name="{{ field.html_name }}"
+                     value="{{ value }}"
+                     {% if field.value|stringformat:'s' == value|stringformat:'s' %}checked{% endif %}
+                     required
+                     aria-label="{% if value == '5' or value == 5 %}Strongly Agree{% elif value == '4' or value == 4 %}Agree{% elif value == '3' or value == 3 %}Neutral{% elif value == '2' or value == 2 %}Disagree{% elif value == '1' or value == 1 %}Strongly Disagree{% endif %}">
+              <span class="rating-radio-text">
+                {% if value == '5' or value == 5 %}Strongly Agree
+                {% elif value == '4' or value == 4 %}Agree
+                {% elif value == '3' or value == 3 %}Neutral
+                {% elif value == '2' or value == 2 %}Disagree
+                {% elif value == '1' or value == 1 %}Strongly Disagree
+                {% endif %}
+              </span>
+            </label>
+          {% endfor %}
+        </div>
+        {% if field.errors %}
+          <div class="error" role="alert">{{ field.errors }}</div>
+        {% endif %}
+      </div>
+      {% endwith %}
+    {% endfor %}
+    
+    {% if feedback_form.non_field_errors %}
+      <div class="error" role="alert">{{ feedback_form.non_field_errors }}</div>
+    {% endif %}
+    
+    <div class="section-title">Additional Feedback</div>
+    
+    <div class="form-group">
+      <label for="id_key_learnings" class="form-label">Key Learnings</label>
+      {{ feedback_form.key_learnings }}
+    </div>
+    
+    <div class="form-group">
+      <label for="id_missing_elements" class="form-label">Missing Elements</label>
+      {{ feedback_form.missing_elements }}
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Submit Feedback
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+// Keyboard navigation for radio buttons
+document.querySelectorAll('.rating-radio-group').forEach(group => {
+  const buttons = group.querySelectorAll('.rating-radio-label');
+  
+  buttons.forEach((button, index) => {
+    button.addEventListener('keydown', (e) => {
+      let nextIndex;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        nextIndex = (index + 1) % buttons.length;
+        buttons[nextIndex].querySelector('input').focus();
+        buttons[nextIndex].querySelector('input').checked = true;
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        nextIndex = (index - 1 + buttons.length) % buttons.length;
+        buttons[nextIndex].querySelector('input').focus();
+        buttons[nextIndex].querySelector('input').checked = true;
+      }
+    });
+  });
+});
+</script>
+
+{% endblock %}

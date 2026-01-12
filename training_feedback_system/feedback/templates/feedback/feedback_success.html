@@ -1,0 +1,26 @@
+{% extends 'feedback/base.html' %}
+
+{% block title %}Feedback Submitted Successfully{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card text-center shadow">
+            <div class="card-body p-5">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle fa-5x text-success"></i>
+                </div>
+                <h2 class="card-title text-success">Thank You!</h2>
+                <p class="card-text lead">
+                    Your feedback has been submitted successfully. 
+                    Your input helps us improve our training programs.
+                </p>
+                <a href="{% url 'feedback:public_session_list' %}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

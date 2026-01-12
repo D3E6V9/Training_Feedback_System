@@ -1,0 +1,139 @@
+{% extends 'feedback/base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{% url 'feedback:create_session' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-plus"></i> New Session
+            </a>
+            <a href="{% url 'feedback:create_trainer' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-user-plus"></i> New Trainer
+            </a>
+            <a href="{% url 'feedback:upload_feedback_image' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-camera"></i> Upload Feedback Image (OCR)
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-calendar fa-2x me-3"></i>
+                <div>
+                    <h3 class="mb-0">{{ total_sessions }}</h3>
+                    <p class="mb-0">Total Sessions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-users fa-2x me-3"></i>
+                <div>
+                    <h3 class="mb-0">{{ total_trainers }}</h3>
+                    <p class="mb-0">Active Trainers</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-comments fa-2x me-3"></i>
+                <div>
+                    <h3 class="mb-0">{{ total_feedback }}</h3>
+                    <p class="mb-0">Total Feedback</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-chart-line fa-2x me-3"></i>
+                <div>
+                    <h3 class="mb-0">4.2</h3>
+                    <p class="mb-0">Avg Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Sessions -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Training Sessions</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Session</th>
+                                <th>Trainer</th>
+                                <th>Date</th>
+                                <th>Responses</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for session in recent_sessions %}
+                            <tr>
+                                <td>{{ session.session_title }}</td>
+                                <td>{{ session.trainer.name }}</td>
+                                <td>{{ session.date|date:"M d, Y" }}</td>
+                                <td>
+                                    <span class="badge bg-primary">{{ session.get_feedback_count }}</span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'feedback:session_detail' session.id %}" class="btn btn-sm btn-outline-primary">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">No sessions found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Top Trainers</h5>
+            </div>
+            <div class="card-body">
+                {% for trainer in top_trainers %}
+                <div class="d-flex align-items-center mb-3">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">{{ trainer.name }}</h6>
+                        <small class="text-muted">{{ trainer.session_count }} sessions</small>
+                    </div>
+                    <span class="badge bg-success">4.{{ forloop.counter }}★</span>
+                </div>
+                {% empty %}
+                <p class="text-muted">No trainer data available</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

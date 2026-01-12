@@ -1,0 +1,26 @@
+{% extends 'feedback/base.html' %}
+{% block title %}Session Feedback Report Email{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Session Feedback Report Email</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="reportText" class="form-label">Email Template</label>
+                            <textarea id="reportText" class="form-control" rows="12" readonly>{{ report_text }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Generate Report Email</button>
+                        <a href="{% url 'feedback:session_detail' session.id %}" class="btn btn-secondary ms-2">Back to Session</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

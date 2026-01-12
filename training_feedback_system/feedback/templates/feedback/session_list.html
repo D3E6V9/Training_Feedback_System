@@ -1,0 +1,61 @@
+{% extends 'feedback/base.html' %}
+{% block title %}Session List{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Training Sessions</h2>
+    <a href="{% url 'feedback:create_session' %}" class="btn btn-primary mb-3">Create New Session</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Trainer</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in page_obj %}
+            <tr>
+                <td>{{ session.session_title }}</td>
+                <td>{{ session.trainer.name }}</td>
+                <td>{{ session.date }}</td>
+                <td>{{ session.location }}</td>
+                <td>
+                    <a href="{% url 'feedback:session_detail' session.id %}" class="btn btn-sm btn-info">View</a>
+                    <a href="{% url 'feedback:delete_session' session.id %}" class="btn btn-sm btn-danger ms-1">Delete</a>
+                    <form method="post" action="{% url 'feedback:toggle_session_active' session.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        {% if session.is_active %}
+                            <button type="submit" class="btn btn-sm btn-warning ms-1" title="Mark as Inactive">
+                                <i class="fas fa-toggle-on"></i> Active
+                            </button>
+                        {% else %}
+                            <button type="submit" class="btn btn-sm btn-secondary ms-1" title="Mark as Active">
+                                <i class="fas fa-toggle-off"></i> Inactive
+                            </button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No sessions found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if page_obj.has_other_pages %}
+    <nav>
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% endif %}
+            <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+

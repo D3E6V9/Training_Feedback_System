@@ -1,0 +1,84 @@
+{% extends 'feedback/base.html' %}
+{% load tz %}
+{% block title %}Session Details{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>{{ session.session_title }}</h2>
+    <p><strong>Trainer:</strong> {{ session.trainer.name }} | <strong>Date:</strong> {{ session.date }}</p>
+    <p><strong>Location:</strong> {{ session.location }} | <strong>Duration:</strong> {{ session.duration_hours }} hrs</p>
+    <hr>
+    <h4>Feedback Responses ({{ response_count }})</h4>
+    {% if feedback_responses %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Participant</th>
+                <th>Average Rating</th>
+                <th>Key Learnings</th>
+                <th>Missing Elements</th>
+                <th>Submitted At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for response in feedback_responses %}
+            <tr>
+                <td>{{ response.participant_name }}</td>
+                <td>{{ response.get_average_rating }}</td>
+                <td>{{ response.key_learnings }}</td>
+                <td>{{ response.missing_elements }}</td>
+                <td>{{ response.submitted_at|localtime|date:'F j, Y, g:i a' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No feedback responses yet.</p>
+    {% endif %}
+
+    <!-- Session-Specific Sentiment Summary Table -->
+    {% load feedback_extras %}
+    <div class="container mt-5">
+        <h3>Summary Table</h3>
+        <table class="table table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>Response Type</th>
+                    {% for question in feedback_questions %}
+                        <th>{{ question }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for sentiment in sentiment_labels %}
+                <tr>
+                    <td>{{ sentiment }}</td>
+                    {% for col in feedback_questions %}
+                        <td>{{ sentiment_matrix|get_item:sentiment|index:forloop.counter0 }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h4>Session Analytics</h4>
+    <div class="row">
+      {% for category, img_url in category_image_pairs %}
+        <div class="col-md-6 mb-4">
+          <h5>{{ category }}</h5>
+          <img src="{{ img_url }}" alt="Feedback Chart for {{ category }}" class="img-fluid" style="border:1px solid #ccc; background:#fff; padding:10px;">
+        </div>
+      {% endfor %}
+    </div>
+
+    <a href="{% url 'feedback:generate_report' session.id %}" class="btn btn-success mt-3">Generate Report</a>
+    <a href="{% url 'feedback:download_feedback_qr' session.id %}" class="btn btn-secondary mt-3 ms-2">
+        <i class="fas fa-qrcode"></i> Download Feedback QR
+    </a>
+    <a href="{% url 'feedback:session_report_email' session.id %}" class="btn btn-info mt-3 ms-2">
+        <i class="fas fa-envelope"></i> Generate Report Email
+    </a>
+    <a href="{% url 'feedback:download_charts' session.id %}" class="btn btn-success mt-3 ms-2">Download Session Charts</a>
+</div>
+{% endblock %}
+

@@ -1,0 +1,81 @@
+// Chart.js CDN for bar charts
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container mt-5">
+    <div class="text-center my-4">
+        <a href="{% url 'feedback:download_report' session.id %}" class="btn btn-primary" style="background: #9b5de5; border: none; border-radius: 8px; font-size: 1.1rem; padding: 12px 32px; box-shadow: 0 2px 8px rgba(155,93,229,0.15);">
+            <strong>Download Word Report</strong>
+        </a>
+    </div>
+    <h3>Sentiment Summary Table</h3>
+    <table class="table table-bordered text-center">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Strongly Agree</th>
+                <th>Agree</th>
+                <th>Neutral</th>
+                <th>Disagree</th>
+                <th>Strongly Disagree</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category, counts in sentiment_summary.items %}
+            <tr>
+                <td>{{ category }}</td>
+                <td>{{ counts['Strongly Agree'] }}</td>
+                <td>{{ counts['Agree'] }}</td>
+                <td>{{ counts['Neutral'] }}</td>
+                <td>{{ counts['Disagree'] }}</td>
+                <td>{{ counts['Strongly Disagree'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 class="mt-5">Feedback Category Bar Charts</h3>
+    <div class="row">
+        {% for chart in chart_data %}
+        <div class="col-md-6 mb-4">
+            <h5>{{ chart.category }}</h5>
+            <canvas id="chart-{{ forloop.counter }}" height="200"></canvas>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Render chart data as JSON for JavaScript -->
+<script id="chart-data-json" type="application/json">
+    {{ chart_data|safe }}
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Parse chart data from JSON script
+        var chartData = JSON.parse(document.getElementById('chart-data-json').textContent);
+        chartData.forEach(function(chart, idx) {
+            var ctx = document.getElementById('chart-' + (idx + 1)).getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chart.labels,
+                    datasets: [{
+                        label: chart.category,
+                        data: chart.data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true, precision: 0 }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        });
+    });
+</script>

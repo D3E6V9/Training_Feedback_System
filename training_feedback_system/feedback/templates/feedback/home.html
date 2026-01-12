@@ -1,0 +1,29 @@
+{% extends 'feedback/base.html' %}
+{% block title %}Active Training Session{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Current Active Training Session</h4>
+                </div>
+                <div class="card-body">
+                    {% if session %}
+                        <h5 class="card-title text-primary fw-bold">{{ session.session_title }}</h5>
+                        <p class="card-text">
+                            <strong>Trainer:</strong> {{ session.trainer.name }}<br>
+                            <strong>Date:</strong> {{ session.date|date:"F d, Y" }}<br>
+                            <strong>Location:</strong> {{ session.location }}<br>
+                            <strong>Duration:</strong> {{ session.duration_hours }} hours
+                        </p>
+                        <a href="{% url 'feedback:submit_feedback' session.id %}" class="btn btn-success mt-3">Give Feedback</a>
+                    {% else %}
+                        <div class="alert alert-info">No active session at the moment.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
