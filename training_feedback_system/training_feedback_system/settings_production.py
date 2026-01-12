@@ -1,7 +1,11 @@
 import os
 from pathlib import Path
 from decouple import config
-import dj_database_url
+
+try:
+    import dj_database_url  # type: ignore
+except ImportError:
+    dj_database_url = None
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -65,7 +69,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'training_feedback_system.wsgi.application'
 
 # Database configuration
-if config('DATABASE_URL', default=None):
+if dj_database_url and config('DATABASE_URL', default=None):
     DATABASES = {
         'default': dj_database_url.config(
             default=config('DATABASE_URL'),
